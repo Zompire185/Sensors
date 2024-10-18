@@ -1,0 +1,53 @@
+TIPI DI DATO (32 bit)
+A: 5 bit ID + 8 bit Group ID + 19 Value bit 
+B: 5 bit ID + 27 Value bit
+C: 5 bit ID + 2 bit Group ID + 25 Value bit 
+D: 5 bit ID + 4 Value bit + 23 padding
+
+SENSORI A (x144)
+
+1) 00000 Battery Voltage 
+2) 00001 Battery Temperature 1
+
+SENSORI B
+
+3) 00010 Water Temperature 1
+4) 11110 Water Temperature 2
+5) 00011 Water Volume 
+6) 00100 Water Pressure 
+7) 00101 Current 
+8) 00110 Regenerative Braking Current 
+9) 00111 Inverter Temperature 
+10) 01000 Brake Position 
+11) 01001 Brake Pressure
+12) 01010 Accelerator Position 
+13) 01011 Steering Position 
+14) 01100 Speed 
+15) 01101 Vehicle Temperature 
+16) 01110 Vehicle Humidity 
+17) 01111 Latitude
+18) 10000 Longitude
+19) 10001 Accelerometer
+20) 10010 Inverter Voltage   
+21) 10011 GPS Date 
+22) 10100 GPS Speed need to convert from knots to KM/H before transmission 
+23) 10101 GPS Angle 
+24) 10110 GPS Fix & Quality 
+
+SENSORI C ( FL (Front Left ): 0, FR ( Front Right ): 1, RL ( Rear Left ): 2, RR ( Rear Right ): 3 )
+
+25) 10111 Air Temperature (x3)
+26) 11000 Torque (x4)
+27) 11001 Engine Temperature (x4)
+28) 11010 Suspension Position  (x4)
+29) 11011 Tire Temperature (x4)
+
+SENSORI D
+
+30) 11100 Boolean Values (x4)
+
+
+
+
+
+
