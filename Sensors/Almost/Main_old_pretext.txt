@@ -1,0 +1,276 @@
+/*
+Task:
+Write a code in cpp for a teensy 4.1 that controls the various sensors 
+3 NTC Thermistor probes
+A MIPAF1XX667PSAAX pressure transducer
+A MT7190-ND current sensor
+A 1528-1153-ND Adafruit GPS Module.
+A MPU6050 Gyroscope/Accelerometer
+4 sls130/75/c/66/1/n Linear displacement sensors
+A DHT11 temperature and humidity sensor 
+2 PANW 103395-395 NTC Thermistor probes
+2 YF-B2 Water Flow Sensors 
+
+
+Code Containers:
+    BATTERY_VOLTAGE(0, "battery.voltage"),                                    // 0b00000 (00) G
+    BATTERY_TEMPERATURE(1, "battery.temperature"),                            // 0b00001 (01) G
+    WATER_TEMPERATURE(2, "water.temperature"),                                // 0b00010 (02) S
+    WATER_LOAD(3, "water.load"),                                              // 0b00011 (03) S
+    WATER_PRESSURE(4, "water.pressure"),                                      // 0b00100 (04) S
+    CAR_CURRENT(5, "car.current"),                                            // 0b00101 (05) S
+    BRAKE_CURRENT(6, "brake.current"),                                        // 0b00110 (06) S
+    INVERTER_TEMPERATURE(7, "inverter.temperature"),                          // 0b00111 (07) S
+    BRAKE_POSITION(8, "brake.position"),                                      // 0b01000 (08) S
+    BRAKE_PRESSURE(9, "brake.pressure"),                                      // 0b01001 (09) S
+    ACCELERATOR_POSITION(10, "accelerator.position"),                         // 0b01010 (10) S
+    STEERINGWHEEL_ANGLE(11, "steeringwheel.angle"),                           // 0b01011 (11) S
+    SPEED(12, "speed"),                                                       // 0b01100 (12) S
+    VEHICLE_TEMPERATURE&Humidity(13, "vehicle.temperature&Humidity"),         // 0b01101 (13) S
+     (14, ""),                                                                // 0b01110 (14) S
+    LATITUDE(15, "latitude"),                                                 // 0b01111 (15) S
+    LONGITUDE(16, "longitude"),                                               // 0b10000 (16) S
+    AIR_TEMPERATURE(17, "air.temperature"),                                   // 0b10001 (17) G
+    ENGINE_TORQUE(18, "engine.torque"),                                       // 0b10010 (18) G
+    ENGINE_TEMPERATURE(19, "engine.temperature"),                             // 0b10011 (19) G
+    SUSPENSION_STROKE(20, "suspension.stroke"),                               // 0b10100 (20) G
+    TIRE_TEMPERATURE(21, "tire.temperature"),                                 // 0b10101 (21) G
+    ACTIVATIONS(22, "activations"),                                           // 0b10110 (22) A
+    ACCELEROMETER(23, "accelerometer"),                                       // 0b10111 (23) S
+    INVERTER_VOLTAGE(24, "inverter.voltage"),                                 // 0b11000 (24) S
+    GPS_DATE(25, "gps.date"),                                                 // 0b11001 (25) S
+    GPS_SPEED(26, "gps.speed"),                                               // 0b11010 (26) S
+    GPS_ANGLE(27, "gps.angle"),                                               // 0b11011 (27) S
+    GPS_FIX_AND_QUALITY(28, "gps.fix_and_quality"),                           // 0b11100 (28) S
+    GYROSCOPE(29, "gyroscope"),                                               // 0b11111 (29) S
+
+Electrical specifications;
+    Water Temperature:
+        - Resistance @ 25º C: 10 kΩ ±3% 
+        - Temperature Coefficient of Resistance: -4.43% / ºC 
+        - Operating Temperature Range: -50 ºC to 150 ºC 
+        - Dissipation Constant: 8 mW / ºC 
+        - Thermal Time Constant: 10 seconds 
+        - Material Constant (Beta): 3950 ºK ±2% 
+        - ROHS Compliant: Yes 
+        - MSL (Moisture Sensitivity Level): 1  
+        Resistor in parallel is of value 10KΩ 
+
+    Water Flow; 
+          Minimum Working Voltage DC 4.5V 
+          Maximum Working Current 15mA (DC 5V) 
+          Working Voltage DC 5V~15V 
+          Flow Rate Range 1~25L/min 
+          Frequency F=(11*Q)Q=L/MIN±3% 
+          Load Capacity ≤10mA (DC 5V) 
+          Operating Temperature 0 ~ 80℃ 
+          Liquid Temperature ≤120℃ 
+          Operating Humidity 35%～90%RH
+          Water Pressure ≤1.75MPa 
+          Error Range (1~30L\MIN) ±3%
+
+    WATER PRESSURE;
+          Ratiometric output: 0.5 Vdc to 4.5 Vdc
+          Current output: 4 mA to 20 mA
+          Operating temperature:  -40°C to 125°C
+          Total Error Band: ±0.75 %FSS to ±1.0 %FSS (-40°C to 125°C) for voltage output
+          Industry-leading accuracy:  ±0.15 %FSS BFSL for voltage output
+          Long term stability: ±0.25 %FSS
+          Radiated immunity: 100 V/m
+
+    CAR CURRENT;
+          Primary Nominal Current 100AT 
+          Saturation Current  ≧±450AT
+          Rated output voltage 4V±0.040V（at If）
+          Offset voltage ≦ ±0.030V（at If = 0A）＊1 
+          Output linearity（0A〜 If）≦ ±1% （at If）
+          Power supply voltage  ±15V ±5%
+          di/dt Response time  ≦ 10µs＊2
+          Ambient Operating temperature ー40℃～＋80℃
+
+
+
+    BRAKE CURRENT;
+
+    INVERTER TEMPERATURE;
+
+    BRAKEPOSITION;
+
+    BRAKE PRESSURE;
+          Ratiometric output: 0.5 Vdc to 4.5 Vdc
+          Current output: 4 mA to 20 mA
+          Operating temperature:  -40°C to 125°C
+          Total Error Band: ±0.75 %FSS to ±1.0 %FSS (-40°C to 125°C) for voltage output
+          Industry-leading accuracy:  ±0.15 %FSS BFSL for voltage output
+          Long term stability: ±0.25 %FSS
+          Radiated immunity: 100 V/m
+
+    ACCELERATOR POSITION;
+
+    STEERINGWHEEL ANGLE;
+
+    VEHICLE TEMPERATURE;
+          3 to 5V power and I/O
+          2.5mA max current use during conversion (while requesting data)
+          20-80% humidity readings with 5% accuracy
+          0-50°C temperature readings ±2°C accuracy
+          1 Hz sampling rate (once every second)
+
+    AIR TEMPERATURE;
+          NTC Thermistor
+          3892 Beta Value with  1% Tolerance,
+          10kOhm Resistance at 25°C with ±0.1°C(±0.44%) Tolerance
+
+
+    ENGINE TORQUE;
+
+    ENGINE TEMPERATURE;
+
+    SUSPENSION STROKE;
+          Electrical stroke E: 75 mm
+          Resistance: ±10% 3 kΩ
+          Independent linearity 
+            guaranteed: ±0.15%
+            typical: ±0.15%
+          Power dissipation at 20˚C: 1.5 W
+          Applied voltage maximum:   67Vdc 
+          Electrical output:   Minimum of 0.5% to 99.5% applied volts
+          Hysteresis (repeatability):  Less than 0.01mm
+
+    TIRE TEMPERATURE;
+
+    ACTIVATIONS;
+      They Are Boolean values use to activate certain utilities onboard and they are;
+        - 1. Bool Fan ON/OFF
+        - 2. Bool Pump ON/OFF
+        - 3. Bool Pow
+
+    INVERTER_VOLTAGE;
+
+    GPS;
+
+     High Sensitivity: Up to -165 dBm tracking, superior urban performances1 
+     • Position Accuracy:  
+     o Without aid: 3m 2D-RMS 
+     o DGPS (SBAS(WAAS,EGNOS,MSAS)):2.5m 2D-RMS 2 
+     Pin Name I/O Description 
+     1 VCC PI Main DC power input 
+     2 ENABLE I High active, or keep floating for normal working 
+     3 GND P Ground 
+     4 VBACKUP PI Backup power input 
+     5 3D-FIX O 3D-fix indicator 
+     6 DPLUS I/O USB port D+ 
+     7 DMINUS I/O USB port D- 
+     8 GND P Ground 
+     9 TX O Serial data output of NMEA 
+     10 RX I Serial data input for firmware update
+     Performance Characteristics 
+     Position Accuracy Without aid: 3m 2D-RMS 
+     DGPS(SBAS(WAAS,EGNOS,MSAS)):2.5m 2D-RMS 
+     Velocity Accuracy Without aid:0.1 m/s 
+     DGPS (SBAS ):0.05m/s 
+     Acceleration Accuracy Without aid:0.1 m/s² 
+     DGPS (SBAS ):0.05m/s² 
+     Timing Accuracy 100 ns RMS 
+     Sensitivity1 Acquisition:-148dBm (Cold Start) 
+     Reacquisition:-160dBm 
+     Tracking:-165dBm 
+     Update Rate 1Hz (Default)
+     Dynamic 
+     Altitude Maximum 18,000m 
+     Velocity Maximum 515m/s 
+     Acceleration Maximum 4G 
+     I/O 
+     Signal Output 8 data bits, no parity, 1 stop bit 
+     Available Baud Rates Default:9600bps (4800/9600/38400/57600/115200 bps by customization) 
+     Protocols NMEA 0183 v3.01 (Default: GGA,GSA,GSV,RMC,VTG) MTK NMEA Command
+
+    GYROSCOPE;
+
+
+The code should start by obtaining data from the GPS module and wait till it has a correct fix before proceeding to read the other sensors.
+Print the date and time only once at the beggining of the loop and then print the other sensor data.
+// The data should be printed in the following format:
+    // 1. Date and time (ddmmyy hh:mm:ss)
+    // 2. Sensor data (sensor ID + sensor value) in a 32-bit binary string format.
+    // 3. The sensor ID should be in the first 5 bits of the 32-bit string(MSB).
+    // 4. The remaining 27 bits should contain the sensor value, scaled to fit within that range.
+    // 5. Priority should be given to the following sensors:
+        Torque
+        Brake Position
+        Brake Pressure
+        Accelerator Position
+        Steering Position 
+        Speed
+        Suspension Position
+        Lattitude 
+        Longitude 
+        Current
+        Regenerative Current 
+        Gyroscope  
+// The data for ( Battery Voltage, Battery Temperature) are gotten from the BMS
+// While those for ( Engine Temperature, Engine Torque, Inveter Temperature, Inverter Voltage) are gotten from the AMK Inveter through the CAN BUS with respective addresss to be determined
+// Activations are Boolean values that represent the state of (Bool Fan, Bool Pump, Bool Power ) 
+Setup Format:
+Wait for all sensors to give an acceptable value 
+Wait for the GPS FIX before procceding 
+Insert Analog Ports to be Defined later on 
+Floats:
+    Create a Float Read Battery Voltage read value from the CAN BUS and convert inside the float 
+    Create a Float Read Battery Temperature read value from the CAN BUS and convert inside the float 
+    Create a Float Read Water Temperature read analog data and convert in the float
+    Create a Float Read Water Flow read analog value and convert inside the float 
+    Create a Float Read Water Pressure read analog value and convert inside the float 
+    Create a Float Read Car current  read analog value and convert inside the float 
+    Create a Float Read Brake Current read analog value and convert inside the float 
+    Create a Float Read Inverter Temperature read value from the CAN BUS and convert inside the float 
+    Create a Float Read Brake Position read analog value and convert inside the float 
+    Create a Float Read Brake Pressure read analog value and convert inside the float 
+    Create a Float Read Accelerator Position read analog value and convert inside the float 
+    Create a Float Read SteeringWheel Angle  read analog value and convert inside the float 
+    Create a Float Read Speed read analog value and convert inside the float 
+    Create a Float Read Vehicle Temperature & Humidity read analog value and convert inside the float 
+    Create a Float Read Air Temperature read analog value and convert inside the float 
+    Create a Float Read Engine Torque read value from the CAN BUS and convert inside the float
+    Create a Float Read Engine Temperature read value from the CAN BUS and convert inside the float 
+    Create a Float Read Suspension Stroke read analog value and convert inside the float 
+    Create a Float Read Tire Temperature read analog value and convert inside the float 
+    Create a Float Read Inverter Voltage read value from the CAN BUS and convert inside the float 
+    Create a Float Read Gyroscope read analog value and convert inside the float 
+    Create a Float Read Activations read analog value and convert inside the float
+    Create a Float Read Float GPS Readings read all GPS data and convert the inside this float 
+Print Format: 
+    Battery Voltage:                      Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    Battery Temperature:                  Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    Water Temperature:                    Bit 31-27 Sensor ID Bit 26-14 Sensor 1 Data, Bit 13 Separator bit (0), Bit 12-0 Sensor 2 Data.   
+    Water Flow:                           Bit 31-27 Sensor ID Bit 26-14 Sensor 1 Data, Bit 13 Separator bit (0), Bit 12-0 Sensor 2 Data. 
+    WATER PRESSURE:                       Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    CAR_CURRENT                           Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    BRAKE_CURRENT                         Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    INVERTER_TEMPERATURE                  Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    BRAKE_POSITION                        Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    BRAKE_PRESSURE                        Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    ACCELERATOR_POSITION                  Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    STEERINGWHEEL_ANGLE                   Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    SPEED                                 Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    VEHICLE_TEMPERATURE & Humidity        Bit 31-27 Sensor ID Bit 26-14 Temperature Data, Bit 13 Separator bit (0), Bit 12-0 Humidity Data.
+    LATITUDE                              Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    LONGITUDE                             Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    AIR_TEMPERATURE                       Bit 31-27 Sensor ID Bit 26-18 Sensor Data, Bit 18-9 Sensor 2 Data, Bit 8-0 Sensor 3 Data.
+    ENGINE_TORQUE                         Bit 31-27 Sensor ID Bit 26-21 Sensor 1 Data, Bit 20 Separator bit (0), Bit 19-14 Sensor 2 Data, Bit 13 Separator bit (0), Bit 12-7 Sensor 3 Data, Bit 6 Separator bit (0), Bit 5-0 Sensor 4 Data.
+    ENGINE_TEMPERATURE                    Bit 31-27 Sensor ID Bit 26-21 Sensor 1 Data, Bit 20 Separator bit (0), Bit 19-14 Sensor 2 Data, Bit 13 Separator bit (0), Bit 12-7 Sensor 3 Data, Bit 6 Separator bit (0), Bit 5-0 Sensor 4 Data.
+    SUSPENSION_STROKE                     Bit 31-27 Sensor ID Bit 26-21 Sensor 1 Data, Bit 20 Separator bit (0), Bit 19-14 Sensor 2 Data, Bit 13 Separator bit (0), Bit 12-7 Sensor 3 Data, Bit 6 Separator bit (0), Bit 5-0 Sensor 4 Data.
+    TIRE_TEMPERATURE                      Bit 31-27 Sensor ID Bit 26-21 Sensor 1 Data, Bit 20 Separator bit (0), Bit 19-14 Sensor 2 Data, Bit 13 Separator bit (0), Bit 12-7 Sensor 3 Data, Bit 6 Separator bit (0), Bit 5-0 Sensor 4 Data.
+    ACTIVATIONS                           Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    ACCELEROMETER                         Bit 31-27 Sensor ID Bit 26-18 AccelerometerX Data, Bit 18-19, AccelerometerY Data, Bit 8-0 AccelerometerZ Data.
+    INVERTER_VOLTAGE                      Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    GPS_DATE                              Bit 31-27 Sensor ID Bit 26-14 Date, Bit 13 Separator bit (0), Bit 12-0 Time.
+    GPS_SPEED                             Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    GPS_ANGLE                             Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    GPS_FIX_AND_QUALITY                   Bit 31-27 Sensor ID Bit 26-0 Sensor Data.
+    GYROSCOPE                             Bit 31-27 Sensor ID Bit 26-18 GyroscopeX Data, Bit 18-9, GyroscopeY Data, Bit 8-0 GyroscopeZ Data.
+
+Print Method;
+The sensor values should be printed to the serial monitor iniziated at 9600 baud rate using the Serial.Write method.
+
+*/
